@@ -17,12 +17,11 @@ void execute_command(char *cmd, char *envp[])
     char **args = ft_split(cmd, ' ');
     if (execve(args[0], args, envp) == -1)
     {
-        perror("execve");
+        fprintf(stderr, "pipex: %s: %s\n", args[0], strerror(errno));
         exit(EXIT_FAILURE);
     }
 }
 
-// Example implementation structure
 int main(int argc, char *argv[], char *envp[])
 {
     if (argc != 5)
@@ -39,7 +38,7 @@ int main(int argc, char *argv[], char *envp[])
     infile = open(argv[1], O_RDONLY);
     if (infile < 0)
     {
-        perror("open infile");
+        fprintf(stderr, "pipex: %s: %s\n", argv[1], strerror(errno));
         return EXIT_FAILURE;
     }
     printf("infile: %d\n", infile);
@@ -47,30 +46,27 @@ int main(int argc, char *argv[], char *envp[])
     outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (outfile < 0)
     {
-        perror("open outfile");
+        fprintf(stderr, "pipex: %s: %s\n", argv[4], strerror(errno));
         close(infile);
         return EXIT_FAILURE;
     }
-
     printf("outfile: %d\n", outfile);
-    
     
     // Create pipe
     if (pipe(pipe_fd) == -1)
     {
-        perror("pipe");
+        fprintf(stderr, "pipex: pipe: %s\n", strerror(errno));
         close(infile);
         close(outfile);
         return EXIT_FAILURE;
     }
-
     printf("pipe_fd[0]: %d\n", pipe_fd[0]);
 
     // First child process
     pid1 = fork();
     if (pid1 == -1)
     {
-        perror("fork");
+        fprintf(stderr, "pipex: fork: %s\n", strerror(errno));
         close(infile);
         close(outfile);
         return EXIT_FAILURE;
@@ -81,7 +77,6 @@ int main(int argc, char *argv[], char *envp[])
         printf("Child 1 process\n");
         dup2(infile, STDIN_FILENO);
         dup2(pipe_fd[1], STDOUT_FILENO);
-        dup2(STDERR_FILENO, 2);
         close(pipe_fd[0]);
         close(infile);
         close(outfile);
@@ -92,7 +87,7 @@ int main(int argc, char *argv[], char *envp[])
     pid2 = fork();
     if (pid2 == -1)
     {
-        perror("fork");
+        fprintf(stderr, "pipex: fork: %s\n", strerror(errno));
         close(infile);
         close(outfile);
         return EXIT_FAILURE;
@@ -100,12 +95,9 @@ int main(int argc, char *argv[], char *envp[])
     if (pid2 == 0)
     {
         // Child 2 process (cmd2)
-        //wait for the first child to finish
-        waitpid(pid1, NULL, 0);
         printf("Child 2 process\n");
         dup2(pipe_fd[0], STDIN_FILENO);
         dup2(outfile, STDOUT_FILENO);
-        dup2(STDERR_FILENO, 2);
         close(pipe_fd[1]);
         close(infile);
         close(outfile);
@@ -117,8 +109,27 @@ int main(int argc, char *argv[], char *envp[])
     close(pipe_fd[1]);
     close(infile);
     close(outfile);
-    waitpid(pid1, NULL, 0);
-    waitpid(pid2, NULL, 0);
+
+    int status;
+    waitpid(pid1, &status, 0);
+    if (WIFEXITED(status))
+    {
+        printf("Child 1 exited with status %d\n", WEXITSTATUS(status));
+    }
+    else if (WIFSIGNALED(status))
+    {
+        printf("Child 1 killed by signal %d\n", WTERMSIG(status));
+    }
+
+    waitpid(pid2, &status, 0);
+    if (WIFEXITED(status))
+    {
+        printf("Child 2 exited with status %d\n", WEXITSTATUS(status));
+    }
+    else if (WIFSIGNALED(status))
+    {
+        printf("Child 2 killed by signal %d\n", WTERMSIG(status));
+    }
 
     return EXIT_SUCCESS;
 }
