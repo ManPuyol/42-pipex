@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: manorteg <manorteg@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: manorteg <manorteg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 15:32:18 by manorteg          #+#    #+#             */
-/*   Updated: 2024/11/24 15:32:18 by manorteg         ###   ########.fr       */
+/*   Updated: 2024/12/07 20:09:24 by manorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 
 #endif
