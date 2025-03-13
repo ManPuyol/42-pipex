@@ -6,7 +6,7 @@
 /*   By: manorteg <manorteg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 15:22:22 by manorteg          #+#    #+#             */
-/*   Updated: 2024/12/08 12:02:23 by manorteg         ###   ########.fr       */
+/*   Updated: 2025/03/13 22:49:55 by manorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ char	*check_command_in_paths(char *cmd, char **paths)
 	char	*temp_path;
 	char	*full_path;
 
+	if (strchr(cmd, '/') != NULL)
+	{
+		free_paths(paths);
+		return (strdup(cmd));
+	}
+
 	i = 0;
 	while (paths[i])
 	{
@@ -63,7 +69,7 @@ char	*get_command_path(char *cmd, char *envp[])
 	char	*full_path;
 
 	path_env = find_path_env(envp);
-	if (path_env == NULL)
+	if (path_env == NULL || !cmd)
 		return (NULL);
 	paths = ft_split(path_env, ':');
 	full_path = check_command_in_paths(cmd, paths);
@@ -88,8 +94,9 @@ void	execute_command(char *cmd, char *envp[])
 	if (execve(cmd_path, args, envp) == -1)
 	{
 		fprintf(stderr, "bash: %s: %s\n", args[0], strerror(errno));
-		exit(EXIT_FAILURE);
+		exit(errno);
 	}
+	free(cmd_path);
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -133,7 +140,7 @@ int	main(int argc, char *argv[], char *envp[])
 	if (pid1 == 0 && infile >= 0)
 	{
 		// Child 1 process (cmd1)
-		printf("Child 1 process\n");
+		//printf("Child 1 process\n");
 		dup2(infile, STDIN_FILENO);
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		close(pipe_fd[0]);
@@ -150,10 +157,8 @@ int	main(int argc, char *argv[], char *envp[])
 		close(outfile);
 		return (EXIT_FAILURE);
 	}
-	if (pid2 == 0 && outfile >= 0)
+	if (pid2 == 0 && outfile >= 0 && pid1 != 0)
 	{
-		// Child 2 process (cmd2)
-		printf("Child 2 process\n");
 		dup2(pipe_fd[0], STDIN_FILENO);
 		dup2(outfile, STDOUT_FILENO);
 		close(pipe_fd[1]);
@@ -166,15 +171,6 @@ int	main(int argc, char *argv[], char *envp[])
 	close(pipe_fd[1]);
 	close(infile);
 	close(outfile);
-	waitpid(pid1, &status, 0);
-	if (WIFEXITED(status))
-		printf("Child 1 exited with status %d\n", WEXITSTATUS(status));
-	else if (WIFSIGNALED(status))
-		printf("Child 1 killed by signal %d\n", WTERMSIG(status));
 	waitpid(pid2, &status, 0);
-	if (WIFEXITED(status))
-		printf("Child 2 exited with status %d\n", WEXITSTATUS(status));
-	else if (WIFSIGNALED(status))
-		printf("Child 2 killed by signal %d\n", WTERMSIG(status));
-	return (EXIT_SUCCESS);
+	return (status);
 }
