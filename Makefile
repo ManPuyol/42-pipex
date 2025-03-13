@@ -5,7 +5,7 @@ SRCS = pipex.c \
 		pipex_command_utils.c \
 		pipex_process_utils.c 
 OBJS = $(SRCS:.c=.o)
-LIBFT_DIR = ../libft
+LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 INCLUDES = -I./ -I$(LIBFT_DIR)
 

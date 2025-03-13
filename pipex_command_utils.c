@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_command_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: manorteg <manorteg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 15:22:22 by manorteg          #+#    #+#             */
-/*   Updated: 2025/03/13 22:49:55 by manorteg         ###   ########.fr       */
+/*   Updated: 2025/03/14 00:30:16 by manorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,12 @@ char	*check_command_in_paths(char *cmd, char **paths)
 	char	*temp_path;
 	char	*full_path;
 
+	i = 0;
 	if (strchr(cmd, '/') != NULL)
 	{
 		free_paths(paths);
 		return (strdup(cmd));
 	}
-
-	i = 0;
 	while (paths[i])
 	{
 		temp_path = ft_strjoin(paths[i], "/");
@@ -98,4 +97,3 @@ void	execute_command(char *cmd, char *envp[])
 	}
 	free(cmd_path);
 }
-
