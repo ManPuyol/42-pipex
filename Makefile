@@ -1,7 +1,9 @@
 NAME = pipex
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-SRCS = pipex.c
+SRCS = pipex.c \
+		pipex_command_utils.c \
+		pipex_process_utils.c 
 OBJS = $(SRCS:.c=.o)
 LIBFT_DIR = ../libft
 LIBFT = $(LIBFT_DIR)/libft.a
