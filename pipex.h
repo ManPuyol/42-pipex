@@ -6,7 +6,7 @@
 /*   By: manorteg <manorteg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 15:32:18 by manorteg          #+#    #+#             */
-/*   Updated: 2025/03/14 00:29:34 by manorteg         ###   ########.fr       */
+/*   Updated: 2025/03/14 15:56:09 by manorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PIPEX_H
 
 # include "libft.h"
+# include "ft_printf.h"
 # include <unistd.h>
 # include <sys/types.h>
 # include <sys/stat.h>

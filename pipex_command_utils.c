@@ -6,7 +6,7 @@
 /*   By: manorteg <manorteg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 15:22:22 by manorteg          #+#    #+#             */
-/*   Updated: 2025/03/14 00:30:16 by manorteg         ###   ########.fr       */
+/*   Updated: 2025/03/14 17:02:07 by manorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,15 +85,7 @@ void	execute_command(char *cmd, char *envp[])
 
 	args = ft_split(cmd, ' ');
 	cmd_path = get_command_path(args[0], envp);
-	if (cmd_path == NULL)
-	{
-		fprintf(stderr, "bash: %s: command not found\n", args[0]);
-		exit(EXIT_FAILURE);
-	}
-	if (execve(cmd_path, args, envp) == -1)
-	{
-		fprintf(stderr, "bash: %s: %s\n", args[0], strerror(errno));
-		exit(errno);
-	}
-	free(cmd_path);
+	execve(cmd_path, args, envp);
+	ft_printf("bash: %s: %s\n", args[0], strerror(errno));
+	exit(127);
 }

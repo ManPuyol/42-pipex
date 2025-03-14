@@ -7,15 +7,20 @@ SRCS = pipex.c \
 OBJS = $(SRCS:.c=.o)
 LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
-INCLUDES = -I./ -I$(LIBFT_DIR)
+PRINT_F_DIR = ./printf
+PRINT_F = $(PRINT_F_DIR)/libftprintf.a
+INCLUDES = -I./ -I$(LIBFT_DIR) -I$(PRINT_F_DIR)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+$(NAME): $(OBJS) $(LIBFT) $(PRINT_F)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(PRINT_F) -o $(NAME)
 
 $(LIBFT):
-	make -C $(LIBFT_DIR)
+	make -C $(LIBFT_DIR) 
+
+$(PRINT_F):
+	make -C $(PRINT_F_DIR)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
@@ -23,10 +28,12 @@ $(LIBFT):
 clean:
 	rm -f $(OBJS)
 	make -C $(LIBFT_DIR) clean
+	make -C $(PRINT_F_DIR) clean
 
 fclean: clean
 	rm -f $(NAME)
 	make -C $(LIBFT_DIR) fclean
+	make -C $(PRINT_F_DIR) fclean
 
 re: fclean all
 

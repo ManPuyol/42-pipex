@@ -6,7 +6,7 @@
 /*   By: manorteg <manorteg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 15:22:22 by manorteg          #+#    #+#             */
-/*   Updated: 2025/03/14 00:27:21 by manorteg         ###   ########.fr       */
+/*   Updated: 2025/03/14 16:54:39 by manorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int	main(int argc, char **argv, char **envp)
 	if (handle_processes(&px, argv) != 0)
 		return (EXIT_FAILURE);
 	close_all_fds(&px);
+	waitpid(px.pid1, NULL, 0);
 	waitpid(px.pid2, &px.status, 0);
-	return (px.status);
+	exit (WEXITSTATUS(px.status));
 }
